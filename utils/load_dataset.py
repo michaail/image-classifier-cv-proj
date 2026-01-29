@@ -25,7 +25,7 @@ def load_dataset(url: str, extract_dir: str = "dataset"):
     with zipfile.ZipFile("dataset.zip", "r") as zip_ref:
         zip_ref.extractall(extract_dir)
 
-    reorganize_and_split_dataset(os.path.join(extract_dir, "dogs-images-main"))
+    reorganize_and_split_dataset(os.path.join(extract_dir, "bike-classifier-dataset-main"))
 
     # return paths to train/val/test folders
     return
@@ -37,8 +37,8 @@ def reorganize_and_split_dataset(source_base_path, target_base_path='dataset_spl
     """
 
     # Where the unzipped data lives currently
-    source_real = os.path.join(source_base_path, 'images', 'real')
-    source_syn  = os.path.join(source_base_path, 'images', 'synthetic')
+    source_real = os.path.join(source_base_path, 'real')
+    source_syn  = os.path.join(source_base_path, 'synthetic')
 
     # Define split counts
     SPLIT_COUNTS = {'train': 10, 'val': 3, 'test': 2}
