@@ -74,34 +74,44 @@ def reorganize_and_split_dataset(source_base_path, target_base_path='dataset_spl
 
         # Verify we have enough images
         required = sum(SPLIT_COUNTS.values()) # 15
-        if len(real_imgs) < required or len(syn_imgs) < required:
-            print(f"⚠️  Warning: Not enough images in {class_name}. Need {required}.")
+        
+        has_real = len(real_imgs) >= required
+        has_syn = len(syn_imgs) >= required
+        
+        if not has_real and not has_syn:
+            print(f"⚠️  Warning: Not enough images in {class_name}. Need {required} in at least one source.")
             continue
 
-        # --- PROCESS REAL ---
-        # Slice the list: 0-10, 10-13, 13-15
-        r_train = real_imgs[:10]
-        r_val   = real_imgs[10:13]
-        r_test  = real_imgs[13:15]
+        r_train, r_val, r_test = [], [], []
+        s_train, s_val, s_test = [], [], []
 
-        copy_files(r_train, 'real', 'train', class_name)
-        copy_files(r_val,   'real', 'val',   class_name)
-        copy_files(r_test,  'real', 'test',  class_name)
+        # --- PROCESS REAL ---
+        if has_real:
+            # Slice the list: 0-10, 10-13, 13-15
+            r_train = real_imgs[:10]
+            r_val   = real_imgs[10:13]
+            r_test  = real_imgs[13:15]
+
+            copy_files(r_train, 'real', 'train', class_name)
+            copy_files(r_val,   'real', 'val',   class_name)
+            copy_files(r_test,  'real', 'test',  class_name)
 
         # --- PROCESS SYNTHETIC ---
-        s_train = syn_imgs[:10]
-        s_val   = syn_imgs[10:13]
-        s_test  = syn_imgs[13:15]
+        if has_syn:
+            s_train = syn_imgs[:10]
+            s_val   = syn_imgs[10:13]
+            s_test  = syn_imgs[13:15]
 
-        copy_files(s_train, 'synthetic', 'train', class_name)
-        copy_files(s_val,   'synthetic', 'val',   class_name)
-        copy_files(s_test,  'synthetic', 'test',  class_name)
+            copy_files(s_train, 'synthetic', 'train', class_name)
+            copy_files(s_val,   'synthetic', 'val',   class_name)
+            copy_files(s_test,  'synthetic', 'test',  class_name)
 
         # --- PROCESS FULL (Real + Synthetic combined) ---
         # We combine the splits we just created to ensure consistency
-        copy_files(r_train + s_train, 'full', 'train', class_name)
-        copy_files(r_val   + s_val,   'full', 'val',   class_name)
-        copy_files(r_test  + s_test,  'full', 'test',  class_name)
+        if has_real or has_syn:
+            copy_files(r_train + s_train, 'full', 'train', class_name)
+            copy_files(r_val   + s_val,   'full', 'val',   class_name)
+            copy_files(r_test  + s_test,  'full', 'test',  class_name)
 
     print(f"\n✅ Done! Dataset organized at: {target_base_path}")
     return target_base_path

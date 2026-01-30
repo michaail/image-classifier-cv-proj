@@ -1,2 +1,9 @@
 requests
 python-dotenv
+numpy==1.24.0
+torch
+torchvision
+pydantic
+tqdm
+scikit-learn
+matplotlib
