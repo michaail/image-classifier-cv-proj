@@ -40,8 +40,8 @@ def reorganize_and_split_dataset(source_base_path, target_base_path='dataset_spl
     source_real = os.path.join(source_base_path, 'real')
     source_syn  = os.path.join(source_base_path, 'synthetic')
 
-    # Define split counts
-    SPLIT_COUNTS = {'train': 10, 'val': 3, 'test': 2}
+    # Define split counts (test=4 per class * 5 classes = 20 real test images)
+    SPLIT_COUNTS = {'train': 10, 'val': 3, 'test': 4}
 
     # 2. cleanup target if exists (to avoid duplicates on re-run)
     if os.path.exists(target_base_path):
@@ -87,10 +87,10 @@ def reorganize_and_split_dataset(source_base_path, target_base_path='dataset_spl
 
         # --- PROCESS REAL ---
         if has_real:
-            # Slice the list: 0-10, 10-13, 13-15
+            # Slice the list: 0-10 train, 10-13 val, 13-17 test
             r_train = real_imgs[:10]
             r_val   = real_imgs[10:13]
-            r_test  = real_imgs[13:15]
+            r_test  = real_imgs[13:17]
 
             copy_files(r_train, 'real', 'train', class_name)
             copy_files(r_val,   'real', 'val',   class_name)
@@ -100,7 +100,7 @@ def reorganize_and_split_dataset(source_base_path, target_base_path='dataset_spl
         if has_syn:
             s_train = syn_imgs[:10]
             s_val   = syn_imgs[10:13]
-            s_test  = syn_imgs[13:15]
+            s_test  = syn_imgs[13:17]
 
             copy_files(s_train, 'synthetic', 'train', class_name)
             copy_files(s_val,   'synthetic', 'val',   class_name)
